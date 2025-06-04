@@ -1,31 +1,12 @@
 extends State
 
-var RollTimer: float = 0.0
+var roll_timer : float = 0.0
 
 func EnterState():
-	print("Entered Roll State")
-	Player.animation.play("Roll")
-	Roll()
-
-func ExitState():
-	print("Exited Roll State")
-
-func Update(delta: float) -> void:
-	RollTimer -= delta
+	print("Entered Dash State")
 	
-	if RollTimer <= 0.0:
-		if ActionType.is_falling(Player):
-			transitioned.emit("Fall")
-		else:
-			transitioned.emit("Idle")
-
-func PhysicsUpdate(delta: float) -> void:
-	Player.HandleGravity(delta)
-	Player.move_and_slide()
-
-func Roll():
-	RollTimer = Player.ROLL_DURATION
-
+	roll_timer = 0.2
+	Player.velocity.y = 0
 	var direction = Player.GetDirection()
 
 	if direction != Vector3.ZERO:
@@ -45,3 +26,18 @@ func Roll():
 			3:
 				Player.velocity.x = 0
 				Player.velocity.z = (-1 if Player.animated_sprite_3d.flip_h else 1) * Player.ROLL_SPEED
+
+func ExitState():
+	print("Exited Dash State")
+
+func Update(delta: float) -> void:
+	Player.animation.play("Idle")
+	roll_timer -= delta
+	if roll_timer <= 0.0:
+		if not Player.is_on_floor():
+			transitioned.emit("Fall")
+		else:
+			transitioned.emit("Idle")
+
+func PhysicsUpdate(delta: float) -> void:
+	Player.move_and_slide()

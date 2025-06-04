@@ -1,9 +1,8 @@
-# PlayerState.gd
+# State.gd
 extends Node3D
 class_name State
 
-signal Transitioned(new_state_name: StringName)
-#signal Transition(target_state_name: String)
+signal transitioned(new_state_name: StringName)
 
 var Player: CharacterBody3D = null
 var States: Node3D = null
@@ -18,7 +17,4 @@ func Update(_delta: float) -> void:
 	pass
 
 func PhysicsUpdate(_delta: float) -> void:
-	pass
-
-func HandleInput(_event: InputEvent) -> void:
 	pass

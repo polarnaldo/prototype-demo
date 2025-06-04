@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://b3eo2e84npki5"]
+[gd_scene load_steps=20 format=3 uid="uid://b3eo2e84npki5"]
 
 [ext_resource type="Script" uid="uid://4aj3y0sc6pt0" path="res://Src/Player/MainPlayer.gd" id="1_onrkg"]
 [ext_resource type="Texture2D" uid="uid://ub0ni5nvi2vr" path="res://Assets/Sprites/PlayerSprites.png" id="2_i3pqv"]
@@ -9,6 +9,7 @@
 [ext_resource type="Script" uid="uid://dsuo4dlyeprns" path="res://Src/Player/States/JumpState.gd" id="7_t26db"]
 [ext_resource type="Script" uid="uid://dry4k7gndvpw4" path="res://Src/Player/States/RollState.gd" id="8_fk5o5"]
 [ext_resource type="Script" uid="uid://x36olkfoutj7" path="res://Src/GUI/StateDebugLabel.gd" id="9_825xp"]
+[ext_resource type="Script" uid="uid://yf0uo3g2bvck" path="res://Src/Player/ActionStateMachine.gd" id="9_ji083"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_iqgwk"]
 margin = 0.0
@@ -134,6 +135,7 @@ _data = {
 [node name="Player" type="CharacterBody3D"]
 collision_mask = 256
 script = ExtResource("1_onrkg")
+timeToReachMaxSpeed = 2.95
 
 [node name="Sprite3D" type="Sprite3D" parent="."]
 billboard = 1
@@ -166,14 +168,15 @@ debug_fill = false
 
 [node name="Camera3D" type="Camera3D" parent="CameraHolder"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 8.27475)
+cull_mask = 524287
 v_offset = 0.02
 projection = 1
 fov = 25.0
 size = 3.6
 
-[node name="StateMachine" type="Node3D" parent="." node_paths=PackedStringArray("initial_state")]
+[node name="StateMachine" type="Node3D" parent="." node_paths=PackedStringArray("current_state")]
 script = ExtResource("3_h54ih")
-initial_state = NodePath("Idle")
+current_state = NodePath("Idle")
 
 [node name="Idle" type="Node3D" parent="StateMachine"]
 script = ExtResource("4_ude3g")
@@ -181,16 +184,17 @@ script = ExtResource("4_ude3g")
 [node name="Run" type="Node3D" parent="StateMachine"]
 script = ExtResource("5_jmcll")
 
-[node name="Fall" type="Node3D" parent="StateMachine"]
-script = ExtResource("6_4wape")
-
 [node name="Jump" type="Node3D" parent="StateMachine"]
 script = ExtResource("7_t26db")
+
+[node name="Fall" type="Node3D" parent="StateMachine"]
+script = ExtResource("6_4wape")
 
 [node name="Roll" type="Node3D" parent="StateMachine"]
 script = ExtResource("8_fk5o5")
 
 [node name="ActionStateMachine" type="Node3D" parent="."]
+script = ExtResource("9_ji083")
 
 [node name="Attack" type="Node3D" parent="ActionStateMachine"]
 
@@ -200,8 +204,8 @@ libraries = {
 }
 autoplay = "Idle"
 
-[node name="Label3D" type="Label3D" parent="." node_paths=PackedStringArray("player")]
+[node name="Label3D" type="Label3D" parent="." node_paths=PackedStringArray("state_machine")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.501264, 0)
 billboard = 1
 script = ExtResource("9_825xp")
-player = NodePath("..")
+state_machine = NodePath("../StateMachine")
